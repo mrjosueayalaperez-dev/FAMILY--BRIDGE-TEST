@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Family Bridge AI — Puente Familiar (TESTING)</title>
+<style>
+:root{--bg:#f6f3ee;--card:#fff;--ink:#1d2433;--mute:#566074;--pri:#1f5f8b;--priInk:#fff;--acc:#b4531a;--line:#d8d2c6;--warn:#fff4d6;--warnInk:#5a4300;--box:sizing;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161d;--card:#1b2230;--ink:#eef1f6;--mute:#a9b3c6;--pri:#6db3e3;--priInk:#0b1722;--acc:#f0a068;--line:#333c4e;--warn:#3a3010;--warnInk:#f5dd9a}}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:18px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:1.5rem;margin:.2em 0}h2{font-size:1.3rem;margin:.6em 0 .3em}h3{font-size:1.05rem;margin:0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.lang{flex-shrink:0;display:flex;border:2px solid var(--pri);border-radius:12px;overflow:hidden}
+.lang button{border:0;background:transparent;color:var(--pri);font:inherit;font-weight:700;padding:10px 16px;min-height:44px}
+.lang button[aria-pressed=true]{background:var(--pri);color:var(--priInk)}
+.big{display:flex;align-items:center;gap:14px;width:100%;min-height:92px;margin:12px 0;padding:16px 20px;border:0;border-radius:18px;background:var(--pri);color:var(--priInk);font:inherit;font-size:1.35rem;font-weight:800;text-align:left;cursor:pointer}
+.big small{display:block;font-weight:500;font-size:.9rem;opacity:.9}
+.big .ic{font-size:2rem}.big.alt{background:var(--card);color:var(--ink);border:2px solid var(--line)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:4px solid var(--acc);outline-offset:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+.warn{background:var(--warn);color:var(--warnInk);border-radius:12px;padding:12px 14px;margin:10px 0;font-size:.95rem}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--line);color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 16px;border-radius:12px;border:2px solid var(--pri);background:var(--card);color:var(--pri);font:inherit;font-weight:700;text-decoration:none;cursor:pointer;margin:4px 6px 4px 0}
+.btn.p{background:var(--pri);color:var(--priInk)}
+.back{background:none;border:0;color:var(--pri);font:inherit;font-weight:700;min-height:44px;padding:0;cursor:pointer}
+#log{min-height:140px}
+.m{padding:10px 12px;border-radius:14px;margin:8px 0;max-width:92%}
+.m.u{background:var(--pri);color:var(--priInk);margin-left:auto}.m.b{background:var(--card);border:1px solid var(--line)}
+.row{display:flex;gap:8px}input[type=text],input[type=search]{flex:1;min-width:0;min-height:52px;padding:10px 12px;font:inherit;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)}
+.mic{width:140px;height:140px;border-radius:50%;border:0;background:var(--acc);color:#fff;font-size:3rem;margin:16px auto;display:block;cursor:pointer}
+.mic.on{animation:p 1s infinite}@keyframes p{50%{transform:scale(1.07)}}
+@media(prefers-reduced-motion:reduce){.mic.on{animation:none;outline:6px solid var(--pri)}}
+.chips button{margin:4px 6px 4px 0;min-height:44px;border-radius:99px;border:1px solid var(--pri);background:transparent;color:var(--pri);padding:6px 14px;font:inherit;cursor:pointer}
+.sr{position:absolute;left:-9999px}
+.hide{display:none}
+@media print{body{background:#fff;color:#000}.noprint,.top,.back{display:none!important}.card{border:1px solid #000}}
+</style></head><body><main>
+<div class="top noprint"><h1 id="brand">Family Bridge AI · Puente Familiar</h1></div>
+<div class="top noprint" style="margin:6px 0 10px"><span class="tag" id="proto"></span>
+<div class="lang" role="group" aria-label="Language / Idioma"><button data-l="en" aria-pressed="true">English</button><button data-l="es" aria-pressed="false">Español</button></div></div>
+<div id="app" aria-live="polite"></div>
+<p class="noprint" style="text-align:center"><button class="back" id="pv"></button> · <button class="back" id="tv"></button></p>
+</main>
+<script>
+const L={en:{
+proto:"TESTING PROTOTYPE · sample data",tag:"Information for families separated by immigration detention.",
+speak:"SPEAK",speakS:"Ask by voice",type:"TYPE",typeS:"Chat with the assistant",docs:"VIEW DOCUMENTS",docsS:"Official forms & instructions",
+sup:"FAMILY SUPPORT",supS:"Legal aid, community, wellbeing",priv:"Privacy & safety",back:"← Home",
+notLawyer:"This assistant is NOT an attorney and gives general information only, not legal advice. For your case, talk to a licensed immigration attorney or accredited representative. Using this app does not create an attorney-client relationship.",
+ask:"Type your question…",send:"Send",chips:["Find a detained person","What is an A-Number?","Find free legal help","Questions for an attorney","Support for my family"],
+hi:"Hello. I can explain general terms, point to official resources, and help you prepare questions for a lawyer. I can’t give legal advice or choose a strategy.",
+tap:"Tap to speak",listening:"Listening… tap to stop",noMic:"Voice is not available on this device or browser, or microphone access was blocked. You can type instead.",
+unsure:"I’m not sure I heard that correctly. I will not guess. I heard:",right:"Is this right?",yes:"Yes, use it",no:"No, try again",
+speakAns:"Read answers aloud",noSpeech:"No speech detected. Please try again or type.",heard:"You said:",
+sample:"Sample data — not a live integration",unknown:"I don’t have verified information on that. I won’t guess. Please contact a licensed immigration attorney or one of the resources in Family Support.",
+sTitle:"Search official forms",sPh:"Search: G-28, asylum, work permit…",open:"Official page",print:"Print checklist",fields:"Understand the fields",
+verify:"Always verify: current form edition, filing rules and fees, deadlines, and signature requirements on the official page. This app never submits anything for you.",
+fill:"Filling PDF fields and downloading a draft is NOT built yet (needs an integration to load official PDFs in the browser). Download the original from the official page and fill it by hand or in your PDF app.",
+chk:["Download the ORIGINAL form from the official page","Confirm the form edition date is current","Read the official instructions","Gather identity and supporting documents (keep copies)","Check filing location, fee, and deadline","Sign in the required place (never sign for someone else)","Ask an attorney or accredited representative to review"],
+noResults:"No forms match. Try another word.",
+verified:"Official link — verify before use",
+privT:"Privacy & safety",privB:["This prototype uses only fictional sample data.","You do not need to share immigration status to browse.","Nothing you type or say is saved by this page. Closing the page clears it.","Voice recognition is done by your browser/device and may send audio to your browser vendor. Use typing if you prefer.","Do not enter real case details, A-Numbers, or documents while testing.","Printed checklists can be seen by others who find the paper."]},
+es:{
+proto:"PROTOTIPO DE PRUEBA · datos de ejemplo",tag:"Información para familias separadas por la detención migratoria.",
+speak:"HABLAR",speakS:"Pregunte con su voz",type:"ESCRIBIR",typeS:"Chatee con el asistente",docs:"VER DOCUMENTOS",docsS:"Formularios e instrucciones oficiales",
+sup:"APOYO FAMILIAR",supS:"Ayuda legal, comunidad, bienestar",priv:"Privacidad y seguridad",back:"← Inicio",
+notLawyer:"Este asistente NO es abogado y solo da información general, no asesoría legal. Para su caso, hable con un abogado de inmigración con licencia o un representante acreditado. Usar esta app no crea una relación abogado-cliente.",
+ask:"Escriba su pregunta…",send:"Enviar",chips:["Buscar a una persona detenida","¿Qué es un número A?","Buscar ayuda legal gratuita","Preguntas para un abogado","Apoyo para mi familia"],
+hi:"Hola. Puedo explicar términos generales, indicar recursos oficiales y ayudarle a preparar preguntas para un abogado. No puedo dar asesoría legal ni elegir una estrategia.",
+tap:"Toque para hablar",listening:"Escuchando… toque para parar",noMic:"La voz no está disponible en este dispositivo o navegador, o se bloqueó el micrófono. Puede escribir.",
+unsure:"No estoy segura de haber entendido bien. No voy a adivinar. Entendí:",right:"¿Es correcto?",yes:"Sí, usar",no:"No, repetir",
+speakAns:"Leer respuestas en voz alta",noSpeech:"No se detectó voz. Intente de nuevo o escriba.",heard:"Usted dijo:",
+sample:"Datos de ejemplo — no es una integración en vivo",unknown:"No tengo información verificada sobre eso. No voy a adivinar. Contacte a un abogado de inmigración con licencia o a los recursos en Apoyo Familiar.",
+sTitle:"Buscar formularios oficiales",sPh:"Buscar: G-28, asilo, permiso de trabajo…",open:"Página oficial",print:"Imprimir lista",fields:"Entender los campos",
+verify:"Siempre verifique: la edición vigente del formulario, reglas y tarifas de presentación, plazos y requisitos de firma en la página oficial. Esta app nunca envía nada por usted.",
+fill:"Llenar campos del PDF y descargar un borrador AÚN NO está construido (requiere una integración para cargar PDFs oficiales en el navegador). Descargue el original en la página oficial y llénelo a mano o en su app de PDF.",
+chk:["Descargue el formulario ORIGINAL en la página oficial","Confirme que la fecha de edición sea la vigente","Lea las instrucciones oficiales","Reúna documentos de identidad y de apoyo (guarde copias)","Revise dónde presentar, tarifa y plazo","Firme donde se requiere (nunca firme por otra persona)","Pida a un abogado o representante acreditado que lo revise"],
+noResults:"Ningún formulario coincide. Pruebe otra palabra.",
+verified:"Enlace oficial — verifique antes de usar",
+privT:"Privacidad y seguridad",privB:["Este prototipo usa solo datos ficticios de ejemplo.","No necesita compartir su estatus migratorio para navegar.","Esta página no guarda lo que escribe o dice. Al cerrarla, se borra.","El reconocimiento de voz lo hace su navegador/dispositivo y puede enviar audio a su proveedor. Escriba si lo prefiere.","No ingrese datos reales de su caso, números A ni documentos durante las pruebas.","Las listas impresas pueden ser vistas por otras personas."]}};
+const FORMS=[
+{id:"G-28",u:"https://www.uscis.gov/g-28",en:"Notice of Entry of Appearance as Attorney or Accredited Representative",es:"Aviso de comparecencia de abogado o representante acreditado",fe:"Names the attorney/representative; the client and representative sign.",fs:"Indica el abogado/representante; firman el cliente y el representante."},
+{id:"I-589",u:"https://www.uscis.gov/i-589",en:"Application for Asylum and for Withholding of Removal",es:"Solicitud de asilo y de suspensión de expulsión",fe:"Personal details, family, background, and the basis of the claim. Deadlines and filing place vary: check instructions.",fs:"Datos personales, familia, antecedentes y base del reclamo. Plazos y lugar varían: revise las instrucciones."},
+{id:"I-130",u:"https://www.uscis.gov/i-130",en:"Petition for Alien Relative",es:"Petición de familiar extranjero",fe:"Identifies the petitioner and the relative; relationship evidence is required.",fs:"Identifica al peticionario y al familiar; se requiere prueba de la relación."},
+{id:"I-765",u:"https://www.uscis.gov/i-765",en:"Application for Employment Authorization",es:"Solicitud de autorización de empleo",fe:"Reason for applying (eligibility category) is chosen by the applicant or their representative.",fs:"El motivo (categoría) lo elige el solicitante o su representante."},
+{id:"EOIR",u:"https://www.justice.gov/eoir/eoir-forms",en:"Immigration Court (EOIR) forms list",es:"Lista de formularios de la corte de inmigración (EOIR)",fe:"Forms used in immigration court, listed by the Executive Office for Immigration Review.",fs:"Formularios usados en la corte de inmigración, de la Oficina Ejecutiva de Revisión de Inmigración."},
+{id:"USCIS",u:"https://www.uscis.gov/forms",en:"All USCIS forms",es:"Todos los formularios de USCIS",fe:"Search every current USCIS form and its instructions.",fs:"Busque todos los formularios actuales de USCIS y sus instrucciones."}];
+const RES={
+legal:[{n:"EOIR — List of Pro Bono Legal Service Providers",u:"https://www.justice.gov/eoir/list-pro-bono-legal-service-providers",en:"Government list of free/low-cost legal providers, by state.",es:"Lista del gobierno de proveedores legales gratuitos o de bajo costo, por estado."},
+{n:"Immigration Advocates Network — Legal Directory",u:"https://www.immigrationlawhelp.org",en:"Search nonprofit immigration legal services near you.",es:"Busque servicios legales de inmigración sin fines de lucro cerca de usted."},
+{n:"ICE Online Detainee Locator System",u:"https://locator.ice.gov",en:"Look up a detained person by A-Number or name and country of birth.",es:"Busque a una persona detenida por número A o nombre y país de nacimiento."},
+{n:"EOIR Automated Case Information",u:"https://acis.eoir.justice.gov",en:"Check immigration court case status. Phone: 1-800-898-7180.",es:"Consulte el estado del caso en la corte de inmigración. Tel.: 1-800-898-7180."}],
+comm:[{n:"ICE Online Detainee Locator System",u:"https://locator.ice.gov",en:"Find the facility first; its page lists visiting and phone rules. Rules differ by facility: confirm directly.",es:"Primero encuentre el centro; allí verá reglas de visita y teléfono. Varían por centro: confirme directamente."}],
+trans:[{n:"211 (dial 2-1-1 or 211.org)",u:"https://www.211.org",en:"Free referral line for local help, including transportation and travel assistance. Availability varies by area.",es:"Línea gratuita de referencias locales, incluido transporte. La disponibilidad varía por zona."}],
+comm2:[{n:"Detention Watch Network",u:"https://www.detentionwatchnetwork.org",en:"National coalition working on detention issues; may help you find local groups.",es:"Coalición nacional sobre detención; puede ayudarle a encontrar grupos locales."},
+{n:"National Immigrant Justice Center",u:"https://immigrantjustice.org",en:"Nonprofit providing legal services and resources.",es:"Organización sin fines de lucro con servicios y recursos legales."}],
+emo:[{n:"988 Suicide & Crisis Lifeline",u:"https://988lifeline.org",en:"Call or text 988, 24/7. Spanish is available. If someone is in immediate danger, call 911.",es:"Llame o envíe texto al 988, 24/7. Hay español. Si hay peligro inmediato, llame al 911."}],
+child:[{n:"211 (dial 2-1-1 or 211.org)",u:"https://www.211.org",en:"Ask for child care help and family services in your area.",es:"Pida ayuda de cuidado infantil y servicios familiares en su zona."},
+{n:"Child Care Aware of America",u:"https://www.childcareaware.org",en:"Help finding local child care resources.",es:"Ayuda para encontrar recursos locales de cuidado infantil."}]};
+const SECT=[["legal",{en:"Attorneys & legal aid",es:"Abogados y ayuda legal"}],["comm",{en:"Family communication",es:"Comunicación familiar"}],["trans",{en:"Transportation assistance",es:"Ayuda con transporte"}],["comm2",{en:"Community organizations",es:"Organizaciones comunitarias"}],["emo",{en:"Emotional support",es:"Apoyo emocional"}],["child",{en:"Childcare assistance",es:"Ayuda con cuidado infantil"}]];
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+const link=(r,l)=>`<div class="card"><h3>${r.n}</h3><p>${r[l]}</p><a class="btn" href="${r.u}" target="_blank" rel="noopener">${L[l].open} ↗</a> <span class="tag">${L[l].verified}</span></div>`;
+// Rule-based assistant (NOT an AI model): matches keywords, returns fixed, general info.
+const INTENTS=[
+{k:["detenid","detained","locat","buscar a","find a","encontrar","paradero","where is"],en:"To find a detained person, use the official ICE Online Detainee Locator. You can search with an A-Number, or with name and country of birth. Records can take time to appear, so check again later or ask an attorney.",es:"Para buscar a una persona detenida, use el Localizador Oficial de Detenidos de ICE. Puede buscar con número A, o con nombre y país de nacimiento. Los registros pueden tardar, así que vuelva a revisar o pregunte a un abogado.",r:["legal",2]},
+{k:["a-number","numero a","a number","alien registration","registro de extranjero"],en:"An A-Number (Alien Registration Number) is a 9-digit number the U.S. government assigns to a person in the immigration system. It is often on immigration papers and is used to look up a detained person or court case.",es:"El número A (Número de Registro de Extranjero) es un número de 9 dígitos que el gobierno de EE. UU. asigna a una persona en el sistema migratorio. Suele aparecer en documentos migratorios y sirve para buscar a una persona detenida o su caso en la corte.",r:["legal",2]},
+{k:["notice to appear","nta","citatorio","aviso de comparecencia","what is"],en:"A Notice to Appear (NTA) is a document that tells a person to appear before an immigration court. It starts removal proceedings. Other common terms: “bond” is money paid to ask for release while a case continues; “EOIR” runs the immigration courts. A lawyer can explain what applies to a specific case.",es:"Un Aviso de Comparecencia (NTA) es un documento que ordena a una persona presentarse ante una corte de inmigración. Inicia el proceso de expulsión. Otros términos: la “fianza” es dinero pagado para pedir liberación mientras sigue el caso; “EOIR” administra las cortes de inmigración. Un abogado puede explicar qué aplica a un caso específico.",r:["legal",3]},
+{k:["lawyer","attorney","legal help","abogado","ayuda legal","legal aid","free legal","gratuit"],en:"Free or low-cost help may be available through nonprofit organizations and the government’s pro bono list. Be careful with “notarios” or consultants who are not attorneys. Check that someone is a licensed attorney or accredited representative.",es:"Puede haber ayuda gratuita o de bajo costo con organizaciones sin fines de lucro y la lista pro bono del gobierno. Tenga cuidado con “notarios” o consultores que no sean abogados. Verifique que sea abogado con licencia o representante acreditado.",r:["legal",0,1]},
+{k:["question","pregunta","prepare","preparar"],en:"Questions you could bring to an attorney:\n• Do you handle detained cases? What is your fee?\n• What are the next court dates and who tracks them?\n• What documents do you need from us?\n• How can we reach you, and how often will you update us?\n• What forms need to be filed, and who files them?",es:"Preguntas que puede llevar a un abogado:\n• ¿Lleva casos de personas detenidas? ¿Cuál es su tarifa?\n• ¿Cuáles son las próximas fechas de corte y quién las vigila?\n• ¿Qué documentos necesita de nosotros?\n• ¿Cómo y con qué frecuencia nos informará?\n• ¿Qué formularios hay que presentar y quién los presenta?",r:["legal",0]},
+{k:["support","apoyo","family","familia","emotional","emocional","child","hijos","ninos","stress","triste","sad"],en:"Being separated from family is very hard. You are not alone. See the Family Support section for emotional support, community organizations, transportation, and childcare resources. If you feel in crisis, call or text 988.",es:"Estar separado de su familia es muy difícil. No está solo/a. Vea la sección de Apoyo Familiar para apoyo emocional, organizaciones comunitarias, transporte y cuidado infantil. Si siente una crisis, llame o envíe texto al 988.",r:["emo",0]}];
+const KEYS=[["detained","detenid*","locator","localizador","donde esta","where is"],["a-number","numero a","a number","alien registration","registro de extranjero"],["notice to appear","nta","citatorio","aviso de comparecencia","eoir","bond","fianza"],["lawyer","attorney","legal help","legal aid","free legal","abogad*","ayuda legal","gratuit*","bajo costo","low cost","low-cost"],["questions for","preguntas","prepare","preparar"],["support","apoyo","family","familia","emotional","emocional","child*","hijos","ninos","stress","triste","sad"]];
+INTENTS.forEach((i,x)=>i.k=KEYS[x]);
+INTENTS[3].go="legal";
+Object.assign(INTENTS[5],{go:"support",r:[],
+en:"Families often need help in these areas: legal aid, contact with a detained relative, transportation, community organizations, childcare, and emotional support. Open Family Support to see links for each. Availability varies by area, so confirm details with each organization.",
+es:"Las familias suelen necesitar ayuda en estas áreas: ayuda legal, contacto con un familiar detenido, transporte, organizaciones comunitarias, cuidado infantil y apoyo emocional. Abra Apoyo Familiar para ver enlaces de cada una. La disponibilidad varía por zona; confirme los detalles con cada organización."});
+INTENTS.push({k:["crisis","suicid*","hopeless","want to die","desesper*","quiero morir","no puedo mas"],
+en:"If you or someone near you is in immediate danger, call 911. For an emotional crisis, call or text 988 (Spanish is available). You are not alone.",
+es:"Si usted o alguien cerca está en peligro inmediato, llame al 911. Para una crisis emocional, llame o envíe texto al 988 (hay español). No está solo/a.",r:["emo",0]});
+INTENTS.push({k:["transport*","aventon","raite","ride","rides","bus","autobus*","viaje*","viajar","travel","gas money","gasolina"],
+en:"Transportation help varies by area. Start with 211 (dial 2-1-1 or 211.org) and ask about rides, travel or gas assistance for family visits. Check the facility’s visiting rules before you travel. Open Family Support for more options.",
+es:"La ayuda con transporte varía según la zona. Empiece con el 211 (marque 2-1-1 o 211.org) y pregunte por viajes, transporte o ayuda con gasolina para visitar a su familiar. Revise las reglas de visita del centro antes de viajar. Abra Apoyo Familiar para más opciones.",r:["trans",0],go:"support"});
+INTENTS.push({k:["comunicarme","comunicarse","comunicar con","communicate","phone","telefono","llamar*","llamada*","call my","can i call","visit*","visita*","hablar con","talk to","speak to","speak with"],
+en:"Staying in touch with a detained relative:\n1. Find the facility first. If you do not know where they are, use the ICE Online Detainee Locator.\n2. Look up that facility’s official contact information (its official page or website). Phone numbers, visiting hours and visitor rules are set by each facility and can change, so do not rely on a number from someone else.\n3. Ask the facility: How do detainees make and receive calls? How do I schedule a visit? What ID is required? Are there restrictions?\n4. A lawyer or accredited representative may be able to arrange legal calls or visits. Use the legal help finder.\nNo one can guarantee contact. Be careful with anyone who asks for money to promise it.",
+es:"Cómo mantenerse en contacto con un familiar detenido:\n1. Primero encuentre el centro. Si no sabe dónde está, use el Localizador Oficial de Detenidos de ICE.\n2. Busque la información de contacto oficial de ese centro (su página o sitio web oficial). Los teléfonos, horarios de visita y reglas para visitantes los fija cada centro y pueden cambiar; no confíe en un número que le dé otra persona.\n3. Pregunte al centro: ¿Cómo hacen y reciben llamadas los detenidos? ¿Cómo programo una visita? ¿Qué identificación piden? ¿Hay restricciones?\n4. Un abogado o representante acreditado quizá pueda gestionar llamadas o visitas legales. Use el buscador de ayuda legal.\nNadie puede garantizar el contacto. Tenga cuidado con quien pida dinero para prometerlo.",
+r:["legal",2],go:"legal"});
+const hit=(n,k)=>{const s=k.endsWith("*"),w=norm(k.replace("*","")).replace(/[.*+?^${}()|[\]\\]/g,"\\$&");return new RegExp("(^|[^a-z0-9])"+w+(s?"":"($|[^a-z0-9])")).test(n)};
+function answer(q){const n=norm(q);const it=[6,4,3,7,8,1,2,0,5].map(x=>INTENTS[x]).find(i=>i.k.some(k=>hit(n,k)));
+ if(!it)return{t:L[lang].unknown,r:[]};
+ const [g,...ix]=it.r;return{t:it[lang],r:ix.map(i=>RES[g][i]),g:it.go};}
+let lang="en",view="home",speechOn=false,pending=null,rec=null;
+const $=s=>document.querySelector(s),app=$("#app");
+function setLang(l){const kq=$("#q"),kt=$("#tts"),qv=kq&&kq.value,tv=kt&&kt.checked;lang=l;document.documentElement.lang=l;document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===l));$("#proto").textContent=L[l].proto;$("#pv").textContent=L[l].priv;$("#tv").textContent=l==="es"?"Equipo de IA":"AI team";render();if(qv&&$("#q"))$("#q").value=qv;if(tv&&$("#tts"))$("#tts").checked=true;}
+function go(v){view=v;render();window.scrollTo(0,0);}
+function head(){const t=L[lang];return`<button class="back noprint" onclick="go('home')">${t.back}</button>`;}
+function render(){const t=L[lang];let h="";
+ if(view==="home")h=`<p>${t.tag}</p><div class="warn">${t.notLawyer}</div>
+ <button class="big" onclick="go('speak')"><span class="ic" aria-hidden="true">🎤</span><span>${t.speak}<small>${t.speakS}</small></span></button>
+ <button class="big" onclick="go('type')"><span class="ic" aria-hidden="true">⌨️</span><span>${t.type}<small>${t.typeS}</small></span></button>
+ <button class="big" onclick="go('docs')"><span class="ic" aria-hidden="true">📄</span><span>${t.docs}<small>${t.docsS}</small></span></button>
+ <button class="big alt" onclick="go('support')"><span class="ic" aria-hidden="true">🤝</span><span>${t.sup}<small>${t.supS}</small></span></button>`;
+ else if(view==="type"||view==="speak"){h=head()+`<h2>${view==="type"?t.type:t.speak}</h2><div class="warn">${t.notLawyer}</div>`;
+  if(view==="speak")h+=`<div id="voice"></div>`;
+  h+=`<div class="card" id="log" role="log" aria-live="polite"><div class="m b">${t.hi}</div></div>
+  <label><input type="checkbox" id="tts"> ${t.speakAns}</label>
+  <form class="row" id="f" onsubmit="return false" style="margin-top:8px"><input type="text" id="q" placeholder="${t.ask}" aria-label="${t.ask}" autocomplete="off"><button class="btn p" id="send">${t.send}</button></form>
+  <div class="chips">${t.chips.map(c=>`<button data-c="${c}">${c}</button>`).join("")}</div><p><button class="btn" id="clr">${lang==="es"?"Borrar conversación":"Clear conversation"}</button></p>`;}
+ else if(view==="docs"){h=head()+`<h2>${t.sTitle}</h2><div class="warn">${t.notLawyer}</div><div class="warn">${t.verify}</div><div class="warn">${t.fill}</div>
+  <input type="search" id="fs" placeholder="${t.sPh}" aria-label="${t.sPh}"><div id="fl"></div>
+  <h3 style="margin-top:14px">${t.print}</h3><div class="card" id="chk"><ol>${t.chk.map(c=>`<li>☐ ${c}</li>`).join("")}</ol><button class="btn p noprint" onclick="window.print()">🖨 ${t.print}</button></div>`;}
+ else if(view==="support"){h=head()+`<h2>${t.sup}</h2><div class="warn">${t.notLawyer}</div><button class="btn p" onclick="go('legal')">⚖️ ${lang==="es"?"Buscar ayuda legal":"Find legal help"}</button><p><span class="tag">${t.verified}</span></p>`+SECT.map(([k,n])=>`<h3 style="margin-top:14px">${n[lang]}</h3>${RES[k].map(r=>link(r,lang)).join("")}`).join("");}
+ else if(view==="team"){h=head()+teamHTML();}
+ else if(view==="legal"){h=head()+legalHTML();}
+ else if(view==="priv"){h=head()+`<h2>${t.privT}</h2><div class="card"><ul>${t.privB.map(b=>`<li>${b}</li>`).join("")}</ul></div>`;}
+ try{rec&&rec.abort()}catch(_){}
+ app.innerHTML=h;
+ if(view==="type"||view==="speak"){REPLAY=true;CONV.forEach(q=>show(q,false));REPLAY=false;}
+ if(view==="docs"){const fs=$("#fs");const draw=()=>{const q=norm(fs.value);const r=FORMS.filter(f=>norm(f.id+f.en+f.es).includes(q));$("#fl").innerHTML=r.length?r.map(f=>`<div class="card"><h3>${f.id} — ${f[lang]}</h3><details><summary>${t.fields}</summary><p>${lang==="en"?f.fe:f.fs}</p></details><a class="btn p" href="${f.u}" target="_blank" rel="noopener">${t.open} ↗</a><span class="tag">${t.verified}</span></div>`).join(""):`<p>${t.noResults}</p>`};fs.value=DQ;fs.oninput=()=>{DQ=fs.value;draw()};draw();}
+ if(view==="type"||view==="speak"){$("#send").onclick=()=>{const v=$("#q").value.trim();if(v){$("#q").value="";ask(v);}};
+  document.querySelectorAll(".chips button").forEach(b=>b.onclick=()=>ask(b.dataset.c));
+  $("#clr").onclick=()=>{CONV.length=0;render();};
+  if(view==="speak")voiceUI();}}
+function add(c,t,extra=""){const d=document.createElement("div");d.className="m "+c;d.innerHTML=t+extra;$("#log").appendChild(d);if(!REPLAY)d.scrollIntoView({block:"start",behavior:"smooth"});return d;}
+const CONV=[];let REPLAY=false,DQ="";
+function ask(q){CONV.push(q);show(q,true);}
+function show(q,sp){add("u",esc(q));const a=answer(q);
+ add("b",a.t.replace(/\n/g,"<br>"),a.r.map(r=>`<div><a href="${r.u}" target="_blank" rel="noopener">${r.n} ↗</a></div>`).join("")+(a.g?`<div><button class="btn p" onclick="go('${a.g}')">${({legal:["Open legal help finder","Abrir buscador de ayuda legal"],support:["Open Family Support","Abrir Apoyo Familiar"]})[a.g][lang==="es"?1:0]}</button></div>`:"")+`<div><span class="tag">${L[lang].sample}</span></div>`);
+ if(sp&&$("#tts")&&$("#tts").checked&&"speechSynthesis" in window){const u=new SpeechSynthesisUtterance(a.t);u.lang=lang==="es"?"es-US":"en-US";speechSynthesis.cancel();speechSynthesis.speak(u);}}
+const TEAM=[
+{n:"Claude",r:{en:"Development & documents",es:"Desarrollo y documentos"},t:{en:"App maintenance, document/PDF processing, accessibility and interface improvements.",es:"Mantenimiento de la app, procesamiento de documentos/PDF, accesibilidad y mejoras de interfaz."}},
+{n:"ChatGPT",r:{en:"Family assistance",es:"Asistencia familiar"},t:{en:"English–Spanish chat and voice, plain-language document explanations, support navigation.",es:"Chat y voz inglés–español, explicaciones sencillas de documentos, orientación de apoyo."}},
+{n:"Grok",r:{en:"Research & resource discovery",es:"Investigación y recursos"},t:{en:"Finds public programs and official resources; flags outdated or unverified items. Staff review before anything is published.",es:"Busca programas públicos y recursos oficiales; marca información vencida o sin verificar. El personal revisa antes de publicar."}},
+{n:"Moose",r:{en:"Configurable (not confirmed)",es:"Configurable (sin confirmar)"},t:{en:"Provider and capabilities unknown until confirmed. Assign a role below; nothing is assumed.",es:"Proveedor y capacidades desconocidos hasta confirmarse. Asigne un rol abajo; no se asume nada."}}];
+const TON={};
+function teamHTML(){const e=lang==="en";return `<h2>${e?"AI team (testing view)":"Equipo de IA (vista de pruebas)"}</h2>
+<div class="warn">${e?"Planning screen. NO AI service is connected. The switches below only change this page’s settings and send nothing anywhere. Real connections will run on a secure server, never in the browser, and legal decisions go to qualified professionals.":"Pantalla de planificación. NINGÚN servicio de IA está conectado. Los interruptores solo cambian esta página y no envían nada. Las conexiones reales irán en un servidor seguro, nunca en el navegador, y las decisiones legales van a profesionales calificados."}</div>
+`+TEAM.map(a=>`<div class="card"><h3>${a.n} — ${a.r[lang]}</h3><p>${a.t[lang]}</p>
+${a.n==="Moose"?`<label>${e?"Role":"Rol"}: <select id="mr"><option>${e?"Unassigned":"Sin asignar"}</option><option>${e?"Assistance":"Asistencia"}</option><option>${e?"Research":"Investigación"}</option><option>${e?"Documents":"Documentos"}</option><option>${e?"Other":"Otro"}</option></select></label><br>`:""}
+<label><input type="checkbox" ${TON[a.n]?"checked":""} onchange="TON['${a.n}']=this.checked;this.parentNode.nextElementSibling.textContent=tstat('${a.n}')"> ${e?"Enabled in settings":"Activado en ajustes"}</label>
+<p><span class="tag">${tstat(a.n)}</span></p></div>`).join("")+`<p>${e?"Information that identifies a family (names, A-Numbers, case details) must be removed before any text leaves the server.":"La información que identifique a una familia (nombres, números A, datos del caso) debe eliminarse antes de que cualquier texto salga del servidor."}</p>`;}
+function tstat(n){const e=lang==="en";return TON[n]?(e?"Enabled in settings — NOT connected, untested":"Activado en ajustes — NO conectado, sin probar"):(e?"Disabled — NOT connected":"Desactivado — NO conectado");}
+let LST="";
+const PAGE=location.href;
+const LEG=[
+{n:"Immigration Advocates Network — Legal Directory",u:"https://www.immigrationadvocates.org/nonprofit/legaldirectory/",en:"Searchable directory of nonprofit immigration legal services. Search by state or ZIP code and filter by type of help.",es:"Directorio de servicios legales de inmigración sin fines de lucro. Busque por estado o código postal y filtre por tipo de ayuda."},
+{n:"EOIR — Pro Bono Legal Service Providers",u:"https://www.justice.gov/eoir/list-pro-bono-legal-service-providers",en:"U.S. Justice Department lists, by state, groups that offer free legal services in immigration court. Check each group’s rules.",es:"El Departamento de Justicia lista, por estado, grupos que ofrecen servicios legales gratuitos en la corte de inmigración. Revise las reglas de cada grupo."},
+{n:"EOIR — Recognized Organizations & Accredited Representatives",u:"https://www.justice.gov/eoir/recognized-organizations-and-accredited-representatives-roster",en:"Official roster of DOJ-recognized organizations and DOJ-accredited representatives (non-attorneys who may represent people). Confirm the person is on the roster.",es:"Lista oficial de organizaciones reconocidas y representantes acreditados por el DOJ (no son abogados pero pueden representar). Confirme que la persona esté en la lista."},
+{n:"AILA — Find an Immigration Lawyer",u:"https://www.ailalawyer.com",en:"Directory of private immigration attorneys. These attorneys usually charge fees. Ask about cost before hiring.",es:"Directorio de abogados privados de inmigración. Normalmente cobran. Pregunte el costo antes de contratar."}];
+const LST_ORG={FL:[{n:"Americans for Immigrant Justice",u:"https://www.aijustice.org"},{n:"Florida Immigrant Coalition",u:"https://floridaimmigrant.org"}],TX:[{n:"RAICES",u:"https://www.raicestexas.org"},{n:"Las Americas Immigrant Advocacy Center",u:"https://www.las-americas.org"}]};
+function legalHTML(){const e=lang==="en",c=r=>`<div class="card"><h3>${r.n}</h3>${r[lang]?`<p>${r[lang]}</p>`:""}<a class="btn p" href="${r.u}" target="_blank" rel="noopener">${L[lang].open} ↗</a> <span class="tag">${L[lang].verified}</span></div>`;
+ return `<h2>${e?"Find legal help":"Buscar ayuda legal"}</h2><div class="warn">${L[lang].notLawyer}</div>
+<div class="warn">${e?"Not every organization gives free representation, takes detained cases, or has room for new clients. Always ask first: cost, whether they take your type of case, and whether they work with people in detention.":"No todas las organizaciones dan representación gratuita, aceptan casos de personas detenidas o tienen espacio. Pregunte primero: costo, si aceptan su tipo de caso y si trabajan con personas detenidas."}</div>
+<h3>${e?"1. Choose your state":"1. Elija su estado"}</h3><select id="st" style="min-height:52px;font:inherit;width:100%" onchange="LST=this.value;render()" aria-label="${e?"State":"Estado"}"><option value="">${e?"Select…":"Seleccione…"}</option><option value="FL" ${LST==="FL"?"selected":""}>Florida</option><option value="TX" ${LST==="TX"?"selected":""}>Texas</option><option value="OT" ${LST==="OT"?"selected":""}>${e?"Another state":"Otro estado"}</option></select>
+<p style="font-size:.95rem">${e?"ZIP code searches are done on the directory sites below (this app does not store your ZIP).":"Las búsquedas por código postal se hacen en los directorios de abajo (esta app no guarda su código postal)."}</p>
+<h3 style="margin-top:14px">${e?"2. Official directories":"2. Directorios oficiales"}</h3>${LEG.map(c).join("")}
+${LST_ORG[LST]?`<h3 style="margin-top:14px">${e?"3. Example organizations in ":"3. Organizaciones de ejemplo en "}${LST==="FL"?"Florida":"Texas"}</h3><div class="warn">${e?"Examples to check, not a guarantee of free help or an open case slot. Confirm in an official directory above.":"Ejemplos para revisar; no garantizan ayuda gratuita ni cupo. Confirme en un directorio oficial de arriba."}</div>${LST_ORG[LST].map(c).join("")}`:(LST==="OT"?`<p>${e?"Use the directories above and filter by your state.":"Use los directorios de arriba y filtre por su estado."}</p>`:"")}
+<h3 style="margin-top:14px">${e?"4. How to contact them":"4. Cómo contactarlos"}</h3><div class="card"><ul>${(e?["Use the phone or form on their official website.","Say if the person is detained and where (facility name).","Ask: Is it free? Do you take detained cases? What do you need from us?","Have the A-Number and court dates ready, but share them only with the organization you chose.","If no answer, try the next organization. Many have waiting lists."]:["Use el teléfono o formulario en su sitio web oficial.","Diga si la persona está detenida y dónde (nombre del centro).","Pregunte: ¿Es gratis? ¿Aceptan casos de personas detenidas? ¿Qué necesitan de nosotros?","Tenga a mano el número A y fechas de corte, pero compártalos solo con la organización que elija.","Si no responden, pruebe la siguiente. Muchas tienen lista de espera."]).map(x=>`<li>${x}</li>`).join("")}</ul></div>
+<div class="warn">${e?"Beware of “notarios” or consultants who are not attorneys and promise results. Confirm a lawyer or accredited representative.":"Cuidado con “notarios” o consultores que no son abogados y prometen resultados. Confirme que sea abogado o representante acreditado."}</div>`;}
+function voiceUI(){const e=lang==="en",t=L[lang],v=$("#voice"),SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ const sec=window.isSecureContext,fr=(()=>{try{return window.self!==window.top}catch(_){return true}})();
+ const open=`<br><a class="btn" href="${PAGE}" target="_blank" rel="noopener">${e?"Open in Chrome/Safari ↗":"Abrir en Chrome/Safari ↗"}</a>`;
+ const M={unsup:e?"Voice recognition is not supported in this view. Many in-app viewers block it. Open this page in Chrome (Android) or Safari (iPhone), or type instead.":"El reconocimiento de voz no funciona en esta vista. Muchas apps lo bloquean. Abra esta página en Chrome (Android) o Safari (iPhone), o escriba.",
+ deny:e?"Microphone access is blocked. If this page is open inside Claude, the Claude viewer does not allow microphones: voice needs the prototype hosted on its own web address. Otherwise tap the lock icon, choose Permissions, and allow Microphone. You can type instead.":"El acceso al micrófono está bloqueado. Si esta página está abierta dentro de Claude, el visor de Claude no permite micrófonos: la voz necesita que el prototipo esté en su propia dirección web. Si no, toque el candado, elija Permisos y permita el Micrófono. Puede escribir.",
+ nomic:e?"No microphone was found on this device.":"No se encontró un micrófono en este dispositivo.",
+ net:e?"Voice recognition needs an internet connection. Check your connection or type instead.":"El reconocimiento de voz necesita internet. Revise su conexión o escriba.",
+ lang:e?"This device does not support English voice recognition.":"Este dispositivo no admite reconocimiento de voz en español.",
+ other:e?"Voice could not start. You can type instead.":"No se pudo iniciar la voz. Puede escribir.",
+ stuck:e?"Voice did not start. Your browser may not support speech recognition here, or the microphone is busy. Try again, open the page in Chrome, or type instead.":"La voz no se inició. Puede que su navegador no admita el reconocimiento de voz aquí, o que el micrófono esté ocupado. Intente de nuevo, abra la página en Chrome o escriba."};
+ v.innerHTML=`<div id="vn" role="alert" class="warn hide"></div><button class="mic" id="mic" aria-label="${t.tap}">🎤</button><p id="vs" style="text-align:center">${t.tap}</p><div id="vc"></div>
+ <details><summary>${e?"Voice check (for testing)":"Revisión de voz (pruebas)"}</summary><ul><li>HTTPS: ${sec?"✔":"✘"}</li><li>${e?"Speech recognition available":"Reconocimiento disponible"}: ${SR?"✔":"✘"}</li><li>${e?"Inside another page/app viewer":"Dentro de otra página/app"}: ${fr?"✔":"✘"}</li></ul><p>${e?"Voice is untested until you see your words transcribed correctly.":"La voz no está probada hasta que vea sus palabras transcritas correctamente."}</p></details>`;
+ const vn=$("#vn"),vs=$("#vs"),mic=$("#mic");
+ const note=(m,o)=>{vn.innerHTML=m+(o?open:"");vn.classList.remove("hide")},clear=()=>{vn.innerHTML="";vn.classList.add("hide")};
+ if(!SR||!sec){note(M.unsup,1);return;}
+ let state="idle";
+ mic.onclick=async()=>{if(state==="starting")return;if(state==="on"){rec&&rec.stop();return;}
+  state="starting";clear();
+  try{if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(x=>x.stop());}}
+  catch(err){state="idle";note(err&&err.name==="NotFoundError"?M.nomic:M.deny);return;}
+  rec=new SR();rec.lang=lang==="es"?"es-US":"en-US";rec.interimResults=false;rec.continuous=false;rec.maxAlternatives=1;let got=false,err=false,wd=null;vs.textContent=e?"Starting…":"Iniciando…";
+  rec.onstart=()=>{clearTimeout(wd);state="on";mic.classList.add("on");vs.textContent=t.listening};
+  rec.onend=()=>{clearTimeout(wd);state="idle";mic.classList.remove("on");vs.textContent=(!got&&!err)?t.noSpeech:t.tap};
+  rec.onerror=ev=>{clearTimeout(wd);state="idle";mic.classList.remove("on");err=true;const c=ev.error;if(c==="no-speech"||c==="aborted"){err=false;return;}note(c==="not-allowed"||c==="service-not-allowed"?M.deny:c==="audio-capture"?M.nomic:c==="network"?M.net:c==="language-not-supported"?M.lang:M.other);};
+  rec.onresult=ev=>{got=true;clear();const r=ev.results[0][0],txt=r.transcript.trim(),c=r.confidence;
+   if(!txt||(c>0&&c<0.6)){$("#vc").innerHTML=`<div class="card"><p>${t.unsure}</p><p><b>“${esc(txt)}”</b></p><p>${t.right}</p><button class="btn p" id="y">${t.yes}</button><button class="btn" id="n">${t.no}</button></div>`;
+    $("#y").onclick=()=>{$("#vc").innerHTML="";if(txt)ask(txt)};$("#n").onclick=()=>{$("#vc").innerHTML=""};}
+   else{$("#vc").innerHTML="";ask(txt);}};
+  try{rec.start();wd=setTimeout(()=>{if(state==="starting"){rec.onend=rec.onerror=null;try{rec.abort()}catch(_){}state="idle";vs.textContent=t.tap;note(M.stuck)}},6000)}catch(_){state="idle";vs.textContent=t.tap;note(M.other)}};}
+$("#tv").onclick=()=>go("team");
+document.querySelectorAll(".lang button").forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+$("#pv").onclick=()=>go("priv");
+setLang(/^es/i.test(navigator.language||"")?"es":"en");
+</script></body></html>
