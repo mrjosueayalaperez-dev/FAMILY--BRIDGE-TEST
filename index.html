@@ -132,8 +132,24 @@ function answer(q){const n=norm(q);const it=[6,4,3,7,8,1,2,0,5].map(x=>INTENTS[x
  const [g,...ix]=it.r;return{t:it[lang],r:ix.map(i=>RES[g][i]),g:it.go};}
 let lang="en",view="home",speechOn=false,pending=null,rec=null;
 const $=s=>document.querySelector(s),app=$("#app");
-function setLang(l){const kq=$("#q"),kt=$("#tts"),qv=kq&&kq.value,tv=kt&&kt.checked;lang=l;document.documentElement.lang=l;document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===l));$("#proto").textContent=L[l].proto;$("#pv").textContent=L[l].priv;$("#tv").textContent=l==="es"?"Equipo de IA":"AI team";render();if(qv&&$("#q"))$("#q").value=qv;if(tv&&$("#tts"))$("#tts").checked=true;}
-function go(v){view=v;render();window.scrollTo(0,0);}
+let readAnswers=null,lastSpoken="",utterance=null,speechTicket=0;
+function voiceStatus(en,es){const el=$("#speechStatus");if(el)el.textContent=lang==="es"?es:en;}
+function stopReply(){speechTicket++;if("speechSynthesis" in window)window.speechSynthesis.cancel();utterance=null;voiceStatus("Audio stopped.","Audio detenido.");}
+function readReply(text){
+ lastSpoken=text;const ticket=++speechTicket;
+ if(!("speechSynthesis" in window)||!("SpeechSynthesisUtterance" in window)){voiceStatus("Spoken replies are unavailable in this browser. Your answer is still shown below.","Este navegador no permite leer respuestas. Su respuesta sigue visible abajo.");return;}
+ const synth=window.speechSynthesis;synth.cancel();
+ setTimeout(()=>{if(ticket!==speechTicket)return;
+ const u=new SpeechSynthesisUtterance(text);utterance=u;u.lang=lang==="es"?"es-US":"en-US";u.rate=0.92;
+ const voices=synth.getVoices();const prefix=lang=== "es"?"es":"en";const voice=voices.find(v=>v.lang.toLowerCase()===u.lang.toLowerCase())||voices.find(v=>v.lang.toLowerCase().startsWith(prefix));if(voice)u.voice=voice;
+ u.onstart=()=>{if(ticket===speechTicket)voiceStatus("Reading the answer aloud…","Leyendo la respuesta en voz alta…");};
+ u.onend=()=>{if(ticket===speechTicket){utterance=null;voiceStatus("Finished. Tap Read answer to hear it again.","Terminado. Toque Leer respuesta para escucharla otra vez.");}};
+ u.onerror=ev=>{if(ticket!==speechTicket)return;utterance=null;if(ev.error!=="canceled"&&ev.error!=="interrupted")voiceStatus("Audio could not play. Turn up media volume and tap Read answer to retry.","No se pudo reproducir el audio. Suba el volumen multimedia y toque Leer respuesta para reintentar.");};
+ voiceStatus("Starting audio… If it stays silent, tap Read answer below.","Iniciando audio… Si no se escucha, toque Leer respuesta abajo.");synth.resume();synth.speak(u);
+ },80);
+}
+function setLang(l){const kq=$("#q"),kt=$("#tts"),qv=kq&&kq.value,tv=kt&&kt.checked;stopReply();lang=l;document.documentElement.lang=l;document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===l));$("#proto").textContent=L[l].proto;$("#pv").textContent=L[l].priv;$("#tv").textContent=l==="es"?"Equipo de IA":"AI team";render();if(qv&&$("#q"))$("#q").value=qv;if(tv&&$("#tts"))$("#tts").checked=true;}
+function go(v){stopReply();if(readAnswers===null&&(v==="speak"||v==="type"))readAnswers=v==="speak";view=v;render();window.scrollTo(0,0);}
 function head(){const t=L[lang];return`<button class="back noprint" onclick="go('home')">${t.back}</button>`;}
 function render(){const t=L[lang];let h="";
  if(view==="home")h=`<p>${t.tag}</p><div class="warn">${t.notLawyer}</div>
@@ -144,7 +160,7 @@ function render(){const t=L[lang];let h="";
  else if(view==="type"||view==="speak"){h=head()+`<h2>${view==="type"?t.type:t.speak}</h2><div class="warn">${t.notLawyer}</div>`;
   if(view==="speak")h+=`<div id="voice"></div>`;
   h+=`<div class="card" id="log" role="log" aria-live="polite"><div class="m b">${t.hi}</div></div>
-  <label><input type="checkbox" id="tts"> ${t.speakAns}</label>
+  <label><input type="checkbox" id="tts" ${readAnswers?"checked":""}> ${t.speakAns}</label><p id="speechStatus" role="status" aria-live="polite"></p><button class="btn" id="stopSpeech" type="button">${lang==="es"?"Detener audio":"Stop audio"}</button>
   <form class="row" id="f" onsubmit="return false" style="margin-top:8px"><input type="text" id="q" placeholder="${t.ask}" aria-label="${t.ask}" autocomplete="off"><button class="btn p" id="send">${t.send}</button></form>
   <div class="chips">${t.chips.map(c=>`<button data-c="${c}">${c}</button>`).join("")}</div><p><button class="btn" id="clr">${lang==="es"?"Borrar conversación":"Clear conversation"}</button></p>`;}
  else if(view==="docs"){h=head()+`<h2>${t.sTitle}</h2><div class="warn">${t.notLawyer}</div><div class="warn">${t.verify}</div><div class="warn">${t.fill}</div>
@@ -158,7 +174,7 @@ function render(){const t=L[lang];let h="";
  app.innerHTML=h;
  if(view==="type"||view==="speak"){REPLAY=true;CONV.forEach(q=>show(q,false));REPLAY=false;}
  if(view==="docs"){const fs=$("#fs");const draw=()=>{const q=norm(fs.value);const r=FORMS.filter(f=>norm(f.id+f.en+f.es).includes(q));$("#fl").innerHTML=r.length?r.map(f=>`<div class="card"><h3>${f.id} — ${f[lang]}</h3><details><summary>${t.fields}</summary><p>${lang==="en"?f.fe:f.fs}</p></details><a class="btn p" href="${f.u}" target="_blank" rel="noopener">${t.open} ↗</a><span class="tag">${t.verified}</span></div>`).join(""):`<p>${t.noResults}</p>`};fs.value=DQ;fs.oninput=()=>{DQ=fs.value;draw()};draw();}
- if(view==="type"||view==="speak"){$("#send").onclick=()=>{const v=$("#q").value.trim();if(v){$("#q").value="";ask(v);}};
+ if(view==="type"||view==="speak"){$("#tts").onchange=()=>{readAnswers=$("#tts").checked;if(readAnswers){const q=CONV[CONV.length-1];readReply(q?answer(q).t:L[lang].hi);}else stopReply();};$("#stopSpeech").onclick=stopReply;$("#send").onclick=()=>{const v=$("#q").value.trim();if(v){$("#q").value="";ask(v);}};
   document.querySelectorAll(".chips button").forEach(b=>b.onclick=()=>ask(b.dataset.c));
   $("#clr").onclick=()=>{CONV.length=0;render();};
   if(view==="speak")voiceUI();}}
@@ -166,8 +182,9 @@ function add(c,t,extra=""){const d=document.createElement("div");d.className="m 
 const CONV=[];let REPLAY=false,DQ="";
 function ask(q){CONV.push(q);show(q,true);}
 function show(q,sp){add("u",esc(q));const a=answer(q);
- add("b",a.t.replace(/\n/g,"<br>"),a.r.map(r=>`<div><a href="${r.u}" target="_blank" rel="noopener">${r.n} ↗</a></div>`).join("")+(a.g?`<div><button class="btn p" onclick="go('${a.g}')">${({legal:["Open legal help finder","Abrir buscador de ayuda legal"],support:["Open Family Support","Abrir Apoyo Familiar"]})[a.g][lang==="es"?1:0]}</button></div>`:"")+`<div><span class="tag">${L[lang].sample}</span></div>`);
- if(sp&&$("#tts")&&$("#tts").checked&&"speechSynthesis" in window){const u=new SpeechSynthesisUtterance(a.t);u.lang=lang==="es"?"es-US":"en-US";speechSynthesis.cancel();speechSynthesis.speak(u);}}
+ const reply=add("b",a.t.replace(/\n/g,"<br>"),a.r.map(r=>`<div><a href="${r.u}" target="_blank" rel="noopener">${r.n} ↗</a></div>`).join("")+(a.g?`<div><button class="btn p" onclick="go('${a.g}')">${({legal:["Open legal help finder","Abrir buscador de ayuda legal"],support:["Open Family Support","Abrir Apoyo Familiar"]})[a.g][lang==="es"?1:0]}</button></div>`:"")+`<div><span class="tag">${L[lang].sample}</span></div>`);
+ const replay=document.createElement("button");replay.type="button";replay.className="btn";replay.textContent=lang==="es"?"🔊 Leer respuesta":"🔊 Read answer";replay.onclick=()=>readReply(a.t);reply.appendChild(replay);
+ if(sp&&$("#tts")&&$("#tts").checked)readReply(a.t);}
 const TEAM=[
 {n:"Claude",r:{en:"Development & documents",es:"Desarrollo y documentos"},t:{en:"App maintenance, document/PDF processing, accessibility and interface improvements.",es:"Mantenimiento de la app, procesamiento de documentos/PDF, accesibilidad y mejoras de interfaz."}},
 {n:"ChatGPT",r:{en:"Family assistance",es:"Asistencia familiar"},t:{en:"English–Spanish chat and voice, plain-language document explanations, support navigation.",es:"Chat y voz inglés–español, explicaciones sencillas de documentos, orientación de apoyo."}},
@@ -215,7 +232,7 @@ function voiceUI(){const e=lang==="en",t=L[lang],v=$("#voice"),SR=window.SpeechR
  if(!SR||!sec){note(M.unsup,1);return;}
  let state="idle";
  mic.onclick=async()=>{if(state==="starting")return;if(state==="on"){rec&&rec.stop();return;}
-  state="starting";clear();
+  stopReply();state="starting";clear();
   try{if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(x=>x.stop());}}
   catch(err){state="idle";note(err&&err.name==="NotFoundError"?M.nomic:M.deny);return;}
   rec=new SR();rec.lang=lang==="es"?"es-US":"en-US";rec.interimResults=false;rec.continuous=false;rec.maxAlternatives=1;let got=false,err=false,wd=null;vs.textContent=e?"Starting…":"Iniciando…";
