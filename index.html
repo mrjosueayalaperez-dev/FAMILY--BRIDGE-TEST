@@ -293,7 +293,8 @@ function bindGuidance(){
 }
 // Route locate questions into guidance without recording personal details in the chat log.
 const originalAsk=ask;
-ask=function(q){const n=norm(q);if(/\b(find|locate|detained|detention|jail|prison|inmate|buscar|encontrar|detenid|encarcel|reclus|carcel|prision)/.test(n)&&!/\b(lawyer|attorney|abogado|legal)\b/.test(n)){guideStart('locate');return;}originalAsk(q);};
+function isLocateQuestion(q){const n=norm(q);return /encarcel|detenid|reclus|carcel|prision|inmate|detain|detention|prison|jail|custodia|custody|numero\s*(de\s*)?a\b|a[ -]?number|no (lo|la|le) encuentro|buscar.*persona|find.*person|locate.*person/.test(n)&&!/(abogad|lawyer|attorney|ayuda legal|legal aid)/.test(n);}
+ask=function(q){if(isLocateQuestion(q)){guideStart('locate');return;}originalAsk(q);};
 
 $("#tv").onclick=()=>go("team");
 document.querySelectorAll(".lang button").forEach(b=>b.onclick=()=>setLang(b.dataset.l));
