@@ -129,7 +129,7 @@ es:"Cómo mantenerse en contacto con un familiar detenido:\n1. Primero encuentre
 r:["legal",2],go:"legal"});
 const hit=(n,k)=>{const s=k.endsWith("*"),w=norm(k.replace("*","")).replace(/[.*+?^${}()|[\]\\]/g,"\\$&");return new RegExp("(^|[^a-z0-9])"+w+(s?"":"($|[^a-z0-9])")).test(n)};
 function answer(q){const n=norm(q);const it=[6,4,3,7,8,1,2,0,5].map(x=>INTENTS[x]).find(i=>i.k.some(k=>hit(n,k)));
- if(!it)return{t:L[lang].unknown,r:[]};
+ if(!it)return{t:lang==="es"?"Quiero ayudarle sin adivinar. ¿Qué necesita ahora: encontrar a alguien, llamar o visitar un centro, revisar una fecha de corte, buscar ayuda legal o apoyar a la familia? Elija una opción abajo. No escriba nombres ni números personales en el chat.":"I want to help without guessing. What do you need now: find someone, call or visit a facility, check a court date, find legal aid, or help the family at home? Choose an option below. Do not enter names or personal numbers in the chat.",r:[],clarify:true};
  const [g,...ix]=it.r;return{t:it[lang],r:ix.map(i=>RES[g][i]),g:it.go};}
 let lang="en",view="home",speechOn=false,pending=null,rec=null;
 const $=s=>document.querySelector(s),app=$("#app");
@@ -186,6 +186,7 @@ function ask(q){CONV.push(q);show(q,true);}
 function show(q,sp){add("u",esc(q));const a=answer(q);
  const reply=add("b",a.t.replace(/\n/g,"<br>"),a.r.map(r=>`<div><a href="${r.u}" target="_blank" rel="noopener">${r.n} ↗</a></div>`).join("")+(a.g?`<div><button class="btn p" onclick="go('${a.g}')">${({legal:["Open legal help finder","Abrir buscador de ayuda legal"],support:["Open Family Support","Abrir Apoyo Familiar"]})[a.g][lang==="es"?1:0]}</button></div>`:"")+`<div><span class="tag">${L[lang].sample}</span></div>`);
  const replay=document.createElement("button");replay.type="button";replay.className="btn";replay.textContent=lang==="es"?"🔊 Leer respuesta":"🔊 Read answer";replay.onclick=()=>readReply(a.t);reply.appendChild(replay);
+ if(a.clarify){const choices=document.createElement("div");[["locate","Find someone","Encontrar a alguien"],["facility","Call or visit","Llamar o visitar"],["hearing","Court or bond","Corte o fianza"],["legal","Legal aid","Ayuda legal"],["familyPlan","Family at home","Familia en casa"]].forEach(([route,en,es])=>{const b=document.createElement("button");b.type="button";b.className="btn";b.textContent=lang==="es"?es:en;b.onclick=()=>{guideStart(route);};choices.appendChild(b);});reply.appendChild(choices);}
  if(sp&&$("#tts")&&$("#tts").checked)readReply(a.t);}
 const TEAM=[
 {n:"Claude",r:{en:"Development & documents",es:"Desarrollo y documentos"},t:{en:"App maintenance, document/PDF processing, accessibility and interface improvements.",es:"Mantenimiento de la app, procesamiento de documentos/PDF, accesibilidad y mejoras de interfaz."}},
@@ -294,7 +295,8 @@ function bindGuidance(){
 // Route locate questions into guidance without recording personal details in the chat log.
 const originalAsk=ask;
 function isLocateQuestion(q){const n=norm(q);return /encarcel|detenid|reclus|carcel|prision|inmate|detain|detention|prison|jail|custodia|custody|numero\s*(de\s*)?a\b|a[ -]?number|no (lo|la|le) encuentro|buscar.*persona|find.*person|locate.*person/.test(n)&&!/(abogad|lawyer|attorney|ayuda legal|legal aid)/.test(n);}
-ask=function(q){if(isLocateQuestion(q)){guideStart('locate');return;}originalAsk(q);};
+function questionRoute(q){const n=norm(q);if(/crisis|suicid|quiero morir|want to die|no puedo mas/.test(n))return '';if(/abogad|lawyer|attorney|ayuda legal|legal aid/.test(n))return '';if(/audiencia|fecha.*corte|cita.*corte|hearing|court date|fianza|bond/.test(n))return 'hearing';if(/visitar|visita|visit|llamar|llamada|phone call|call.*(him|her|them)|send money|enviar dinero/.test(n))return 'facility';if(isLocateQuestion(q))return 'locate';if(/cuidar.*(hij|nin)|childcare|caregiver|plan familiar/.test(n))return 'familyPlan';return '';}
+ask=function(q){const route=questionRoute(q);if(route){guideStart(route);if(readAnswers)readReply($('#guideTitle').textContent+'. '+$('#guideBody').innerText);return;}originalAsk(q);};
 
 $("#tv").onclick=()=>go("team");
 document.querySelectorAll(".lang button").forEach(b=>b.onclick=()=>setLang(b.dataset.l));
