@@ -2,6 +2,13 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1f5f8b">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Family Bridge">
 <title>Family Bridge AI — Puente Familiar (TESTING)</title>
 <style>
 :root{--bg:#f6f3ee;--card:#fff;--ink:#1d2433;--mute:#566074;--pri:#1f5f8b;--priInk:#fff;--acc:#b4531a;--line:#d8d2c6;--warn:#fff4d6;--warnInk:#5a4300;--box:sizing;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -301,4 +308,5 @@ $("#tv").onclick=()=>go("team");
 document.querySelectorAll(".lang button").forEach(b=>b.onclick=()=>setLang(b.dataset.l));
 $("#pv").onclick=()=>go("priv");
 setLang(/^es/i.test(navigator.language||"")?"es":"en");
-</script></body></html>
+</script><script>if("serviceWorker" in navigator){addEventListener("load",function(){navigator.serviceWorker.register("./sw.js",{scope:"./"}).catch(function(){})})}</script>
+</body></html>
